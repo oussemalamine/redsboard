@@ -1,0 +1,204 @@
+/* Font Styles */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+.dashContainer {
+  width: 100vw;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 11% 89%;
+  grid-template-columns: 20% 80%;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main ";
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+/* Header */
+.header-dash {
+  grid-area: header;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #194955;
+  padding: 0px 60px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+.header-dash h1 {
+  font-family: "Caveat", cursive;
+  color: white;
+  font-size: 3rem;
+}
+.search-bar {
+  width: 25%;
+  height: 50%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+.search-bar input {
+  height: 100%;
+  width: 90%;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: none;
+}
+.search-bar input:focus {
+  border: none;
+  outline: none;
+}
+.search-icon-container {
+  width: 15%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-right: 1px solid black;
+}
+.header-conf {
+  width: 17%;
+  height: 50%;
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-conf-item {
+  width: 20%;
+  height: 100%;
+  border-radius: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: glow 2s infinite;
+  /* box-shadow: 0 0 10px rgba(0, 255, 0, 0.7); */
+}
+.header-icon {
+  font-size: 2rem;
+}
+.face-img {
+  border-radius: 5rem;
+  width: 100%;
+  height: 100%;
+}
+.down-icon {
+  font-size: 2rem;
+}
+.liste-deroul {
+  /* display: none; */
+  background-color: white;
+  position: absolute;
+  width: 8%;
+  height: 13%;
+  right: 0;
+  top: -1%;
+  display: none;
+  border-radius: 0.2rem;
+  transform: translateX(-50%) translateY(80%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+.liste-deroul ul {
+  list-style-type: none;
+  text-align: center;
+}
+.liste-deroul ul li {
+  padding: 5px 20px;
+}
+.liste-deroul-fleche {
+  position: absolute;
+  top: -20%;
+  right: 0%;
+  border: 10px solid transparent;
+  border-top-color: white;
+  transform: rotate(180deg);
+}
+.dropdown {
+  display: block;
+}
+/* End header */
+
+/* Sidebar */
+.sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #263043;
+  color: white;
+}
+.sidebar-logo {
+  width: 100%;
+  height: 11%;
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: #1d2733;
+  padding: 15px;
+}
+.sidebar-logo img {
+  width: 10rem;
+}
+.sidebar-title {
+  width: 100%;
+  height: 8%;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: "Caveat", cursive;
+}
+.sidebar-list {
+  width: 80%;
+  height: 80%;
+  list-style-type: none;
+  margin-top: 20px;
+}
+.sidebar-item {
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0px;
+}
+.sidebar-item a {
+  width: 100%;
+  height: 100%;
+  color: #9e9ea4;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+.sidebar-item-icon {
+  margin-right: 15px;
+}
+/* End Sidebar */
+/* Main */
+.main {
+  grid-area: main;
+  background-color: #f5f7fb;
+}
+
+/* End Main */
+
+/* Aniamtion */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+  }
+}
