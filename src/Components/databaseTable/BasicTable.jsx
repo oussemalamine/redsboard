@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react"
 import { handleExport } from "./handleFile"
 import * as XLSX from "xlsx"
-import FileSaver from "file-saver"
 import SearchBar from "../SearchBar"
 import { FaSortUp, FaSortDown } from "react-icons/fa6"
 import "./table.css"
@@ -14,17 +13,45 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table"
-import { columnDef } from "./columns"
 const FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"
 const FILE_EXTENTION = ".xlsx"
-const BasicTable = () => {
+const BasicTable = ({ programName }) => {
   const [filtering, setFiltering] = useState("")
-  const [data, setData] = useState([])
+  const [data, setData] = useState(
+    JSON.parse(localStorage.getItem(programName) || [])
+  )
   const [rows, setRows] = useState(0)
+  const [columns, setColumns] = useState(
+    data.length > 0
+      ? Object.keys(data[0]).map((column) => {
+          return { accessorKey: column, header: column }
+        })
+      : []
+  )
   const [error, setError] = useState(false)
   const [jsx, setJsx] = useState(<div></div>)
   const [active, setActive] = useState(true)
+  useEffect(() => {
+    setData(JSON.parse(localStorage.getItem(programName) || "[]"))
+  }, [programName])
+
+  useEffect(() => {
+    if (data.length > 0) {
+      setColumns(
+        Object.keys(data[0]).map((column) => ({
+          accessorKey: column,
+          header: column,
+        }))
+      )
+    } else {
+      setColumns([])
+    }
+  }, [data])
+
+  console.log(data)
+  console.log(data.length)
+  console.log(columns)
   const handleFileUpload = (e) => {
     const reader = new FileReader()
     reader.readAsBinaryString(e.target.files[0])
@@ -35,8 +62,13 @@ const BasicTable = () => {
       const sheet = workbook.Sheets[sheetName]
       const parseData = XLSX.utils.sheet_to_json(sheet)
       setData(parseData)
+      localStorage.setItem(programName, JSON.stringify(parseData))
       setRows(parseData.length)
-      console.log(Object.keys(parseData[0]))
+      setColumns(
+        Object.keys(parseData[0]).map((column) => {
+          return { accessorKey: column, header: column }
+        })
+      )
     }
   }
   useEffect(() => {
@@ -63,11 +95,11 @@ const BasicTable = () => {
         </div>
       )
   }, [data, active])
+
   const [sorting, setSorting] = useState([])
-  const finalColumn = useMemo(() => columnDef, [])
   const finalData = useMemo(() => data, [data])
   const tableInstance = useReactTable({
-    columns: finalColumn,
+    columns: columns,
     data: finalData,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -4,6 +4,9 @@ table {
   box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.35);
   border-collapse: collapse;
   border-radius: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: "----";
 }
 table thead,
 tr:not(:last-child) {
