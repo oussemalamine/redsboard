@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 /* the styling of the app layout*/
 .formContainer2 {
   width: 100vw;
@@ -36,7 +37,6 @@
 .form-title {
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
-  margin-bottom: 0.5em;
 }
 .input-group-r {
   position: relative;
@@ -65,7 +65,7 @@ select {
   font-size: 0.8rem;
   background-color: hsl(0, 0%, 95%);
   height: 50%;
-  width: 3rem;
+  width: 2rem;
   padding: 0.3em;
 }
 .btn-r {
@@ -88,6 +88,10 @@ select {
   font-size: 1.2em;
   color: #b4263c;
   font-weight: bold;
+}
+.number {
+  width: 300px;
+  margin: auto;
 }
 /*Responsive midium and small screens*/
 

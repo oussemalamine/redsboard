@@ -3,8 +3,12 @@ import { FaPhone, FaEnvelope, FaUser, FaLock } from "react-icons/fa";
 import { useFormik } from "formik";
 import { signupValidation } from "./signupValidation.jsx";
 import Tooltip from "./Tooltip.jsx";
-import { Link } from "react-router-dom";
+import { Link, json } from "react-router-dom";
 import "./register.css";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import axios from "axios";
+import bcrypt from "bcryptjs";
 
 const initialValues = {
   username: "",
@@ -14,11 +18,29 @@ const initialValues = {
   password: "",
   confirmation: "",
 };
+
 const onSubmit = async (values, actions) => {
-  console.log(values); /* these are the values send by the form  */
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  actions.resetForm();
+  console.log("VALUES =>", values); /* these are the values send by the form  */
+  // Hash the password from the values;
+  const pass = await bcrypt.hash(values.password, 10);
+  // Hash the pass confirmationf;
+  const confPass = await pass;
+  try {
+    // Post request for sending user's data to the server;
+    const sendData = await axios.post("http://localhost:3000/api/register", {
+      ...values,
+      password: pass,
+      confirmation: confPass,
+    });
+    if (sendData.data === "Registration Succeeded, Welcome On Board!")
+      // Show Success Message and Change Path Here;
+      //await new Promise((resolve) => setTimeout(resolve, 1000));
+      actions.resetForm();
+  } catch (error) {
+    console.log("sendData() error =>", error);
+  }
 };
+
 function Register() {
   const { values, handleChange, touched, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
@@ -80,12 +102,14 @@ function Register() {
             }
           >
             <FaPhone className="icon-r" />
-            <input
+            <PhoneInput
+              className="number"
+              country={"tn"}
               type="tel"
               placeholder="Phone Number"
               name="phone"
               value={values.phone}
-              onChange={handleChange}
+              onChange={(event) => (values.phone = event)}
             />
             {errors.phone && touched.phone && (
               <Tooltip state={true} error={errors.phone} />
@@ -139,7 +163,7 @@ function Register() {
           >
             <select name="role" value={values.role} onChange={handleChange}>
               <option value="" disabled>
-                Select your role
+                Please Select Your Business Role
               </option>
               <option value="super admin">Super Admin</option>
               <option value="hr">HR</option>
