@@ -2,7 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 /* the styling of the app layout*/
 .formContainer2 {
-  font-family: "Montserrat", sans-serif;
   width: 100vw;
   min-height: 100vh;
   background: linear-gradient(to bottom, #044c54, #111111);
@@ -17,6 +16,7 @@
   padding: 2rem;
   background-color: white;
   border-radius: 0.5em;
+  z-index: 2;
 }
 /* the  styling of the title of the app*/
 .app-title {
@@ -35,12 +35,13 @@
   gap: 0.5rem;
 }
 .form-title {
-  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
   margin-bottom: 0.5em;
 }
 .input-group-r {
   position: relative;
-  padding: 0.5em;
+  padding: 0.2em;
   background-color: hsl(0, 0%, 95%);
   display: flex;
   gap: 0.5rem;
@@ -65,7 +66,7 @@ select {
   font-size: 0.8rem;
   background-color: hsl(0, 0%, 95%);
   height: 50%;
-  width: 2rem;
+  width: 3rem;
   padding: 0.3em;
 }
 .btn-r {
@@ -107,6 +108,18 @@ select {
   display: none;
   background-color: #b4263c;
   color: white;
+  animation-name: animate-tooltip;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+@keyframes animate-tooltip {
+  0% {
+    transform: scale(0) translateX(10%) translateY(-120%);
+  }
+  100% {
+    transform: scale(1) translateX(10%) translateY(-120%);
+  }
 }
 .tooltip p {
   font-weight: bold;
@@ -117,7 +130,7 @@ select {
   position: absolute;
   bottom: -50%;
   left: 50%;
-  border: 0.7rem solid transparent;
+  border: 10px solid transparent;
   border-top-color: #b4263c;
 }
 .visible {

@@ -11,7 +11,11 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ParticlesBackground from "../ParticlesBackground";
+import { useDispatch, useSelector } from "react-redux";
+import { handleLogin } from "../../app/features/login/loginSlice";
+import { useDebouncedCallback } from "use-debounce";
 const initial_Values = {
   email: "",
   password: "",
@@ -24,14 +28,20 @@ function Login() {
   const { values, handleChange, handleSubmit, touched, errors } = useFormik({
     initialValues: initial_Values,
     validationSchema: signinValidation,
-    onSubmit: (values) => {
-      console.log(values);
-    },
+    // onSubmit: (values) => {
+    //   console.log(values);
+    // },
   });
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.loginSlice);
+  console.log(state);
   //******* functions
   function handleVisiblity() {
     setPasswordVisible(!passwordVisible);
   }
+  const handleStore = useDebouncedCallback((key, value) => {
+    dispatch(handleLogin({ key, value }));
+  }, 250);
   return (
     <div className="formContainer1">
       <form onSubmit={handleSubmit} className="form" action="post">
@@ -47,7 +57,10 @@ function Login() {
             placeholder="Email"
             name="email"
             value={values.email}
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              handleStore("email", e.target.value);
+            }}
           />
         </div>
 
@@ -65,7 +78,10 @@ function Login() {
               placeholder="Password"
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("password", e.target.value);
+              }}
             />
 
             <div className="eyeIcon">
@@ -93,6 +109,7 @@ function Login() {
           Not a member ?<Link to="/Register">Sign Up</Link>
         </p>
       </form>
+      <ParticlesBackground />
     </div>
   );
 }

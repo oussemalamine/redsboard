@@ -5,7 +5,10 @@ import { signupValidation } from "./signupValidation.jsx";
 import Tooltip from "./Tooltip.jsx";
 import { Link } from "react-router-dom";
 import "./register.css";
-
+import ParticlesBackground from "../ParticlesBackground";
+import { useDispatch, useSelector } from "react-redux";
+import { handleRegister } from "../../app/features/register/registerSlice.js";
+import { useDebouncedCallback } from "use-debounce";
 const initialValues = {
   username: "",
   email: "",
@@ -25,9 +28,15 @@ function Register() {
     validationSchema: signupValidation,
     onSubmit,
   });
-
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.registerSlice);
+  console.log(state);
+  const handleStore = useDebouncedCallback((key, value) => {
+    dispatch(handleRegister({ key, value }));
+  }, 250);
   return (
     <div className="formContainer2">
+      <ParticlesBackground />
       <div className="register-form">
         <h1 className="app-title">
           <img src={logo} alt="redstart logo-r" className="logo-r" />
@@ -47,7 +56,10 @@ function Register() {
               placeholder="Full Name"
               name="username"
               value={values.username}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("username", e.target.value);
+              }}
             />
             {errors.username && touched.username && (
               <Tooltip state={true} error={errors.username} />
@@ -66,7 +78,10 @@ function Register() {
               placeholder="Email"
               name="email"
               value={values.email}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("email", e.target.value);
+              }}
             />
             {errors.email && touched.email && (
               <Tooltip state={true} error={errors.email} />
@@ -85,7 +100,10 @@ function Register() {
               placeholder="Phone Number"
               name="phone"
               value={values.phone}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("phone", e.target.value);
+              }}
             />
             {errors.phone && touched.phone && (
               <Tooltip state={true} error={errors.phone} />
@@ -104,7 +122,10 @@ function Register() {
               placeholder="Password"
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("password", e.target.value);
+              }}
             />
             {errors.password && touched.password && (
               <Tooltip state={true} error={errors.password} />
@@ -123,7 +144,10 @@ function Register() {
               placeholder="Password Confirmation"
               name="confirmation"
               value={values.confirmation}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("confirmation", e.target.value);
+              }}
             />
             {errors.confirmation && touched.confirmation && (
               <Tooltip state={true} error={errors.confirmation} />
@@ -137,7 +161,14 @@ function Register() {
                 : "input-group-r"
             }
           >
-            <select name="role" value={values.role} onChange={handleChange}>
+            <select
+              name="role"
+              value={values.role}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("role", e.target.value);
+              }}
+            >
               <option value="" disabled>
                 Select your role
               </option>
