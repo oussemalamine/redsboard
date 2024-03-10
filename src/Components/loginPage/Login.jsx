@@ -24,14 +24,25 @@ const initial_Values = {
 function Login() {
   // ********Hooks declaration
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const { values, handleChange, handleSubmit, touched, errors } = useFormik({
     initialValues: initial_Values,
     validationSchema: signinValidation,
-    // onSubmit: (values) => {
-    //   console.log(values);
+    // onSubmit: async (values) => {
+    //   axios
+    //     .post("http://localhost:3000/login", { username, password })
+    //     .then((response) => {
+    //       // Handle success
+    //       console.log("Authentication successful", response.data);
+    //       history.push("/Dash");
+    //     })
+    //     .catch((error) => {
+    //       // Handle error
+    //       console.log("Authentication failed", error.response);
+    //       // Show error message to the user
+    //     });
     // },
   });
+
   const dispatch = useDispatch();
   const state = useSelector((state) => state.loginSlice);
   console.log(state);
@@ -115,3 +126,4 @@ function Login() {
 }
 
 export default Login;
+

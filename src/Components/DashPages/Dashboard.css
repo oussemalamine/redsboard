@@ -11,6 +11,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 .dashboardCon h1 {
   font-family: "Roboto", sans-serif;

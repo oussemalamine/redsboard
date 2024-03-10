@@ -3,8 +3,8 @@ import SearchBar from "./SearchBar";
 import { IoSettings } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
 import face from "../Images/face.jpg";
-import { TfiMenuAlt } from "react-icons/tfi";
-import { FaCaretDown } from "react-icons/fa";
+import Menu from "./Menu/Menu";
+import { FaMessage } from "react-icons/fa6";
 
 function Header({ selectedItem }) {
   return (
@@ -15,17 +15,16 @@ function Header({ selectedItem }) {
       <SearchBar />
       <div className="header-list-container">
         <ul className="header-list">
-          <li>
-            <IoSettings style={{ color: "white" }} />
+          <li className="header-list-item">
+            <Menu />
           </li>
-          <li>
+          <li className="header-list-item">
+            <FaMessage style={{ color: "white" }} />
+          </li>
+          <li className="header-list-item">
             <IoIosNotifications style={{ color: "white" }} />
           </li>
         </ul>
-        <div className="menu">
-          <img src={face} alt="" />
-          <FaCaretDown className="menuDown" style={{ color: "white" }} />
-        </div>
       </div>
     </header>
   );
