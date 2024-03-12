@@ -16,7 +16,7 @@ function Header({ selectedItem }) {
       <div className="header-list-container">
         <ul className="header-list">
           <li className="header-list-item">
-            <Menu />
+            <Menu  />
           </li>
           <li className="header-list-item">
             <FaMessage style={{ color: "white" }} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Login from "./Components/loginPage/Login";
 import "./App.css";
 import Register from "./Components/Register/Register";
@@ -11,27 +11,41 @@ import HR from "./Components/DashPages/HRmanagment";
 import Activity from "./Components/DashPages/LatestActivity";
 import Marketing from "./Components/DashPages/Marketing";
 import User from "./Components/DashPages/User";
-import { Provider } from "react-redux";
-import { store } from "./app/store";
-
+import { useSelector } from "react-redux";
+import PrivateRoute from "./Components/PageNotFound/PrivateRoute";
+import ProtectedRoute from "./ProtectedRoute";
+import PageNotFound from "./Components/PageNotFound/PageNotFound";
 function App() {
+  const isLogged = useSelector((state) => state.loginSlice.isLogged);
+  useEffect(() => {
+    console.log("isLogged:",isLogged);
+  }, [isLogged]);
+
   return (
     <div className="container">
-      <Provider store={store}>
-        <Routes>
-          <Route path="/Dash" element={<Dash />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="database" element={<Database />} />
-            <Route path="events" element={<Events />} />
-            <Route path="HR" element={<HR />} />
-            <Route path="activities" element={<Activity />} />
-            <Route path="marketing" element={<Marketing />} />
-            <Route path="user" element={<User />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
-        </Routes>
-      </Provider>
+      <Routes>
+        <Route
+          path="/Dash"
+          element={
+            <ProtectedRoute isLogged={isLogged}>
+              <Dash isLogged={isLogged} />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="database" element={<Database />} />
+          <Route path="events" element={<Events />} />
+          <Route path="HR" element={<HR />} />
+          <Route path="activities" element={<Activity />} />
+          <Route path="marketing" element={<Marketing />} />
+          <Route path="user" element={<User />} />
+          <Route path="*" element={<p>There is Nothing Here</p>} />
+        </Route>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/Register" element={<Register />} />
+        <Route path="/*" element={<PageNotFound />} />
+        <Route path="/not_Connected" element={<PrivateRoute />} />
+      </Routes>
     </div>
   );
 }

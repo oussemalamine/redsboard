@@ -4,12 +4,22 @@ import Menu from "@mui/material/Menu";
 import { IoSettings } from "react-icons/io5";
 import "./Menu.css";
 import MenuItem from "@mui/material/MenuItem";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLogged } from "../../../app/features/login/loginSlice";
 
 export default function PositionedMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleLogout = () => {
+    localStorage.setItem("isLogged", false);
+    dispatch(setLogged());
+    navigate("/login");
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -44,7 +54,14 @@ export default function PositionedMenu() {
       >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            handleLogout();
+          }}
+        >
+          Logout
+        </MenuItem>
       </Menu>
     </div>
   );
