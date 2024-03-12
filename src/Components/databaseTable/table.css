@@ -49,3 +49,9 @@ tfoot td {
 .sorting-icon {
   margin-left: 0.3em;
 }
+.table-sort {
+  position: relative;
+}
+.sort-copy {
+  position: sticky;
+}
