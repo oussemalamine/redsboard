@@ -12,12 +12,13 @@ app.use(cors());
 // Database Connection
 mongoose
   .connect(
-    "mongodb+srv://superadmin:reddeadred2@atlascluster.qaabaa5.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster"
-  )
+    "mongodb+srv://mihawk:<password>@red.fssx4uf.mongodb.net/?retryWrites=true&w=majority&appName=red"  )
   .then(() => {
     console.log("Connected to MongoDB Atlas");
   })
-  .catch((error) => {
+
+
+  .catch   ((error) => {
     console.error("Error connecting to MongoDB Atlas:", error);
   });
 
