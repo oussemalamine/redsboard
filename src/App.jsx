@@ -47,7 +47,7 @@ function App() {
         <Route path="/not_Connected" element={<PrivateRoute />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
