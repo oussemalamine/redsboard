@@ -4,7 +4,7 @@ function SearchBar() {
   return (
     <div className="search-bar">
       <div className="search-icon-container">
-        <FaSearch className="search-icon" style={{ color: "#454545" }} />
+        <FaSearch className="search-icon" style={{ color: "	#869ec8" }} />
       </div>
       <input
         className="search-bar-input"

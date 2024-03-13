@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import img from "../Images/logo.png";
 import "./Login.css";
-import signinValidation from "./signupValidation";
+import signinValidation from "./signinValidation";
 import { useFormik } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,7 +11,13 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ParticlesBackground from "../ParticlesBackground";
+import { useDispatch, useSelector } from "react-redux";
+import { handleLogin } from "../../app/features/login/loginSlice";
+import { useDebouncedCallback } from "use-debounce";
+import axiosInstance from "../axiosInstance";
+
 const initial_Values = {
   email: "",
   password: "",
@@ -20,18 +26,36 @@ const initial_Values = {
 function Login() {
   // ********Hooks declaration
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const { values, handleChange, handleSubmit, touched, errors } = useFormik({
     initialValues: initial_Values,
     validationSchema: signinValidation,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log(values);
+      axiosInstance
+        .post("/login", values)
+        .then((response) => {
+          // Handle success
+          console.log("Authentication successful", response.data);
+          history.push("/Dash");
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Authentication failed", error);
+          // Show error message to the user
+        });
     },
   });
+
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.loginSlice);
+  console.log(state);
   //******* functions
   function handleVisiblity() {
     setPasswordVisible(!passwordVisible);
   }
+  const handleStore = useDebouncedCallback((key, value) => {
+    dispatch(handleLogin({ key, value }));
+  }, 250);
   return (
     <div className="formContainer1">
       <form onSubmit={handleSubmit} className="form" action="post">
@@ -47,7 +71,10 @@ function Login() {
             placeholder="Email"
             name="email"
             value={values.email}
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              handleStore("email", e.target.value);
+            }}
           />
         </div>
 
@@ -65,7 +92,10 @@ function Login() {
               placeholder="Password"
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("password", e.target.value);
+              }}
             />
 
             <div className="eyeIcon">
@@ -93,6 +123,7 @@ function Login() {
           Not a member ?<Link to="/Register">Sign Up</Link>
         </p>
       </form>
+      <ParticlesBackground />
     </div>
   );
 }

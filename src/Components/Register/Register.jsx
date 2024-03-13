@@ -1,14 +1,16 @@
+import React from "react";
 import logo from "../Images/logo.png";
 import { FaPhone, FaEnvelope, FaUser, FaLock } from "react-icons/fa";
+import signupValidation from "./signupValidation.js";
 import { useFormik } from "formik";
-import { signupValidation } from "./signupValidation.jsx";
 import Tooltip from "./Tooltip.jsx";
-import { Link, json } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./register.css";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import axios from "axios";
-import bcrypt from "bcryptjs";
+import ParticlesBackground from "../ParticlesBackground";
+import { useDispatch, useSelector } from "react-redux";
+import { handleRegister } from "../../app/features/register/registerSlice.js";
+import { useDebouncedCallback } from "use-debounce";
+import axiosInstance from "../axiosInstance.js";
 
 const initialValues = {
   username: "",
@@ -19,34 +21,28 @@ const initialValues = {
   confirmation: "",
 };
 
-const onSubmit = async (values, actions) => {
-  console.log("VALUES =>", values); /* these are the values send by the form  */
-  // Hash the password from the values;
-  const pass = await bcrypt.hash(values.password, 10);
-  // Hash the pass confirmationf;
-  const confPass = await pass;
-  try {
-    // Post request for sending user's data to the server;
-    const sendData = await axios.post("http://localhost:3000/api/register", {
-      ...values,
-      password: pass,
-      confirmation: confPass,
-    });
-    if (sendData.data === "Registration Succeeded, Welcome On Board!")
-      // Show Success Message and Change Path Here;
-      //await new Promise((resolve) => setTimeout(resolve, 1000));
-      actions.resetForm();
-  } catch (error) {
-    console.log("sendData() error =>", error);
-  }
-};
-
 function Register() {
-  const { values, handleChange, touched, handleSubmit, errors } = useFormik({
+  const { values, handleSubmit, handleChange, touched, errors } = useFormik({
     initialValues: initialValues,
     validationSchema: signupValidation,
-    onSubmit,
+    onSubmit: async (values, actions) => {
+      try {
+        console.log(values); /* these are the values send by the form  */
+
+        const sendData = await axiosInstance.post("/signup", values);
+        alert(sendData.data.info);
+        //actions.resetForm();
+      } catch (error) {
+        console.log(error);
+      }
+    },
   });
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.registerSlice);
+  //console.log(state);
+  const handleStore = useDebouncedCallback((key, value) => {
+    dispatch(handleRegister({ key, value }));
+  }, 250);
 
   return (
     <div className="formContainer2">
@@ -54,7 +50,7 @@ function Register() {
         <h1 className="app-title">
           <img src={logo} alt="redstart logo-r" className="logo-r" />
         </h1>
-        <form action="#" className="form-r" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form-r" action="post">
           <h1 className="form-title">Create an account</h1>
           <div
             className={
@@ -69,7 +65,10 @@ function Register() {
               placeholder="Full Name"
               name="username"
               value={values.username}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("username", e.target.value);
+              }}
             />
             {errors.username && touched.username && (
               <Tooltip state={true} error={errors.username} />
@@ -88,7 +87,10 @@ function Register() {
               placeholder="Email"
               name="email"
               value={values.email}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("email", e.target.value);
+              }}
             />
             {errors.email && touched.email && (
               <Tooltip state={true} error={errors.email} />
@@ -102,14 +104,15 @@ function Register() {
             }
           >
             <FaPhone className="icon-r" />
-            <PhoneInput
-              className="number"
-              country={"tn"}
+            <input
               type="tel"
               placeholder="Phone Number"
               name="phone"
               value={values.phone}
-              onChange={(event) => (values.phone = event)}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("phone", e.target.value);
+              }}
             />
             {errors.phone && touched.phone && (
               <Tooltip state={true} error={errors.phone} />
@@ -128,7 +131,10 @@ function Register() {
               placeholder="Password"
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("password", e.target.value);
+              }}
             />
             {errors.password && touched.password && (
               <Tooltip state={true} error={errors.password} />
@@ -147,7 +153,10 @@ function Register() {
               placeholder="Password Confirmation"
               name="confirmation"
               value={values.confirmation}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("confirmation", e.target.value);
+              }}
             />
             {errors.confirmation && touched.confirmation && (
               <Tooltip state={true} error={errors.confirmation} />
@@ -161,9 +170,16 @@ function Register() {
                 : "input-group-r"
             }
           >
-            <select name="role" value={values.role} onChange={handleChange}>
+            <select
+              name="role"
+              value={values.role}
+              onChange={(e) => {
+                handleChange(e);
+                handleStore("role", e.target.value);
+              }}
+            >
               <option value="" disabled>
-                Please Select Your Business Role
+                Select your role
               </option>
               <option value="super admin">Super Admin</option>
               <option value="hr">HR</option>
@@ -175,7 +191,7 @@ function Register() {
               <Tooltip state={true} error={errors.role} />
             )}
           </div>
-          <button type="submit" className="btn-r">
+          <button type="submit" className="btn-r" value="signup">
             Sign Up
           </button>
           <Link to="/login" className="login-link">

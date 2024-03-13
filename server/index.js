@@ -1,85 +1,57 @@
+require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
+const passport = require("passport");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const db = process.env.DATABASE_URI;
+const secret = process.env.SECRET;
 const PORT = process.env.PORT || 3000;
 const app = express();
+const signupRoute = require("./routes/api/signup");
+const loginRoute = require("./routes/api/login");
+
+require("./passport/index");
 
 app.use(express.json());
 
 // Enable CORS
-app.use(cors());
-
-// Database Connection
-mongoose
-  .connect(
-    "mongodb+srv://mihawk:<password>@red.fssx4uf.mongodb.net/?retryWrites=true&w=majority&appName=red"  )
-  .then(() => {
-    console.log("Connected to MongoDB Atlas");
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow the client app to access the server
+    credentials: true, // Allow cookies/session to be sent from the client
   })
+);
 
+app.use(
+  session({
+    secret: secret,
+    resave: false,
+    saveUninitialized: false, // Don't create session until something stored
+    cookie: {
+      secure: false, // Requires https
+      httpOnly: true, // Prevents client side JS from reading the cookie
+      maxAge: 1000 * 60 * 60 * 24, // Cookie will live for 24H
+    },
+  })
+);
 
-  .catch   ((error) => {
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Routes
+app.post("/signup", signupRoute);
+app.post("/login", loginRoute);
+
+// Database + Server Connection Validation
+mongoose
+  .connect(db)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log("Database Connected!");
+      console.log(`server is running on PORT: ${PORT}`);
+    });
+  })
+  .catch((error) => {
     console.error("Error connecting to MongoDB Atlas:", error);
   });
-
-// Single Admin Schema
-const UserSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  phone: String,
-  role: String,
-  password: String,
-  confirmation: String,
-  validation: Boolean,
-});
-
-// Single Admin Model
-const UserModel = mongoose.model("users", UserSchema);
-
-// POST Request to get user's data and save it
-app.post("/api/register", async (req, res) => {
-  console.log("i'm alive");
-  console.log("data ==> ", req.body);
-  try {
-    const { username, email, phone, role, password, confirmation } = req.body;
-    // If Username exists return response to front "Username already exists";
-    const existingUsername = await UserModel.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ error: "Username already exists" });
-    }
-    // If Email exists return response to front "Email already exists";
-    const existingEmail = await UserModel.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-    // If Phone Number exists return response to front "Phone Number already in use";
-    const existingPhoneNumber = await UserModel.findOne({ phone });
-    if (existingPhoneNumber) {
-      return res.status(400).json({ error: "Phone Number already in use" });
-    }
-    // Create new user and give it data from req.body sent from front;
-    const newUser = new UserModel({
-      username,
-      email,
-      phone,
-      role,
-      password,
-      confirmation,
-      validation: false,
-    });
-    // Save the new user in database;
-    const savedUser = await newUser.save();
-    // If user is saved succeessfuly send response to front "Registration Succeeded, Welcome On Board!";
-    res.status(200).send("Registration Succeeded, Welcome On Board!");
-    console.log("Registered...");
-  } catch (error) {
-    console.error("Error saving user:", error);
-    res.status(500).json({ error: "Registration Failed!" });
-  }
-});
-
-// Server Connection Validation
-app.listen(PORT, () => {
-  console.log("I'M ALIVE :D");
-  console.log(`server is running on PORT: ${PORT}`);
-});
