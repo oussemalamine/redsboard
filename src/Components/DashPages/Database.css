@@ -93,7 +93,7 @@ input[type="file"] {
 }
 .program-select {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   gap: 0.5rem;
   margin-bottom: 2rem;
@@ -106,8 +106,4 @@ input[type="file"] {
 .program-select button {
   width: auto;
   margin: 0;
-}
-.program-select select {
-  margin: 0;
-  max-width: 300px;
 }

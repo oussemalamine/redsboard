@@ -13,7 +13,7 @@ import { useLocalStorage } from "../useLocalStorage"
 const PROGRAMS_KEY = "__0prgramsKey"
 function Database() {
   const [programs, setPrograms] = useLocalStorage(PROGRAMS_KEY, [])
-  const [select, setSelect] = useState("select a program")
+  const [select, setSelect] = useState("")
   const [inputProgram, setInputProgram] = useState("")
   const [error, setError] = useState(false)
 
@@ -45,12 +45,21 @@ function Database() {
           arrow
           placement="top"
         >
-          <Box sx={{ minWidth: 200 }}>
-            <FormControl fullWidth>
+          <Box>
+            <FormControl size="small">
               <InputLabel id="demo-simple-select-label">
                 Select a Program
               </InputLabel>
               <Select
+                variant="outlined"
+                sx={{
+                  minWidth: 200,
+                  textAlign: "center",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#044c54",
+                    borderWidth: 2,
+                  },
+                }}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={select}
@@ -81,11 +90,7 @@ function Database() {
           Add Program
         </button>
       </div>
-      {select === "select a program" ? (
-        <div></div>
-      ) : (
-        <BasicTable programName={select} />
-      )}
+      {select === "" ? <div></div> : <BasicTable programName={select} />}
     </div>
   )
 }
