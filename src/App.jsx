@@ -39,9 +39,8 @@ function App() {
           <Route path="activities" element={<Activity />} />
           <Route path="marketing" element={<Marketing />} />
           <Route path="user" element={<User />} />
-          <Route path="*" element={<p>There is Nothing Here</p>} />
         </Route>
-        <Route path="/login" element={<Login/>}/>
+        <Route path="/" element={<Login/>}/>
         <Route path="/Register" element={<Register />} />
         <Route path="/*" element={<PageNotFound />} />
         <Route path="/not_Connected" element={<PrivateRoute />} />

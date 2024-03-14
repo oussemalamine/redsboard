@@ -70,30 +70,33 @@ form h3 {
   margin-right: 0.5em;
 }
 .btn {
-  background-color: #044c54;
+  background-color: white;
+  color: #044c54;
   width: 90%;
-  border: none;
-  color: white;
+  border: 1px solid #044c54;
   padding: 8px;
   margin: 20px;
   border-radius: 0.3em;
   font-style: bold;
   cursor: pointer;
   font-weight: bold;
+  text-transform: uppercase;
 }
 .upLink {
   padding: 10px 0px;
 }
-
 .btn:hover {
   transition: 0.5s;
   transform: scale(1.07);
+  letter-spacing: 0.25em;
+  background-color: #044c54;
+  color: white;
+  box-shadow: 0 0 35px #044c54;
 }
 .error {
   color: red;
   margin: 0px 0px 10px 0px;
 }
-
 .inputPassword {
   border: none;
   outline: none;

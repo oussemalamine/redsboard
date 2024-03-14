@@ -19,7 +19,7 @@ export default function PositionedMenu() {
   const handleLogout = () => {
     localStorage.setItem("isLogged", false);
     dispatch(setLogged());
-    navigate("/login");
+    navigate("/");
   };
   const handleClose = () => {
     setAnchorEl(null);

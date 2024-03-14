@@ -116,7 +116,12 @@ function Login() {
           </label>
           <a href="#">Forgot Password?</a>
         </div>
-        <input className="btn" type="submit" value="Get Started" />
+        <button className="btn" type="submit">
+          {" "}
+          <span>
+          </span>
+          Get Started
+        </button>
         <p className="upLink">
           Not a member ?<Link to="/Register">Sign Up</Link>
         </p>
