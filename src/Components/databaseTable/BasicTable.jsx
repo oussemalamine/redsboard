@@ -23,9 +23,6 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   const [jsx, setJsx] = useState(<div></div>)
   const [active, setActive] = useState(true)
 
-  useEffect(() => {
-    setRows(program.data.length)
-  }, [program])
   const handleFileUpload = (e) => {
     console.log("upload function triggered")
     const reader = new FileReader()
@@ -45,6 +42,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
     console.log("New data:", newData)
     const oldEmails = program.data.map((row) => row.email)
     const newElements = newData.filter((row) => !Exist(row.email, oldEmails))
+    setRows(newElements.length)
     console.log("New elements:", newElements)
     const updatedPrograms = programs.map((element) =>
       element === program
