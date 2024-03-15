@@ -24,9 +24,8 @@ function Database() {
       setError(true)
       return
     }
-    const newPrograms = [...programs, { name }]
+    const newPrograms = [...programs, { name, data: [] }]
     setPrograms(newPrograms)
-    localStorage.setItem(name, JSON.stringify([]))
     setInputProgram("")
   }
   function exist(name) {
@@ -35,6 +34,10 @@ function Database() {
       if (program.name === name) test = true
     })
     return test
+  }
+  function searchData(programName) {
+    const program = programs.find((element) => element.name === programName)
+    return program
   }
   return (
     <div className="database-container">
@@ -90,7 +93,15 @@ function Database() {
           Add Program
         </button>
       </div>
-      {select === "" ? <div></div> : <BasicTable programName={select} />}
+      {select === "" ? (
+        <div></div>
+      ) : (
+        <BasicTable
+          program={searchData(select)}
+          setPrograms={setPrograms}
+          programs={programs}
+        />
+      )}
     </div>
   )
 }

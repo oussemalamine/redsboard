@@ -16,43 +16,18 @@ import {
 const FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"
 const FILE_EXTENTION = ".xlsx"
-const BasicTable = ({ programName }) => {
+const BasicTable = ({ setPrograms, program, programs }) => {
   const [filtering, setFiltering] = useState("")
-  const [data, setData] = useState(
-    JSON.parse(localStorage.getItem(programName) || [])
-  )
   const [rows, setRows] = useState(0)
-  const [columns, setColumns] = useState(
-    data.length > 0
-      ? Object.keys(data[0]).map((column) => {
-          return { accessorKey: column, header: column }
-        })
-      : []
-  )
   const [error, setError] = useState(false)
   const [jsx, setJsx] = useState(<div></div>)
   const [active, setActive] = useState(true)
-  useEffect(() => {
-    setData(JSON.parse(localStorage.getItem(programName) || "[]"))
-  }, [programName])
 
   useEffect(() => {
-    if (data.length > 0) {
-      setColumns(
-        Object.keys(data[0]).map((column) => ({
-          accessorKey: column,
-          header: column,
-        }))
-      )
-    } else {
-      setColumns([])
-    }
-  }, [data])
-
-  console.log(data)
-  console.log(data.length)
-  console.log(columns)
+    setRows(program.data.length)
+  }, [program])
   const handleFileUpload = (e) => {
+    console.log("upload function triggered")
     const reader = new FileReader()
     reader.readAsBinaryString(e.target.files[0])
     reader.onload = (e) => {
@@ -61,46 +36,43 @@ const BasicTable = ({ programName }) => {
       const sheetName = workbook.SheetNames[0]
       const sheet = workbook.Sheets[sheetName]
       const parseData = XLSX.utils.sheet_to_json(sheet)
-      setData(parseData)
-      localStorage.setItem(programName, JSON.stringify(parseData))
-      setRows(parseData.length)
-      setColumns(
-        Object.keys(parseData[0]).map((column) => {
-          return { accessorKey: column, header: column }
-        })
-      )
+      compareData(parseData)
     }
   }
-  useEffect(() => {
-    if (error)
-      setJsx(
-        <div className="database-error-message">
-          <p>Alert! there is an error</p>
-        </div>
-      )
-    else if (rows !== 0)
-      setJsx(
-        <div
-          className={
-            active
-              ? "database-success-message"
-              : "database-success-message hide"
-          }
-        >
-          <p>You found {rows} results</p>
-          <FaXmark
-            className="message-icon"
-            onClick={() => setActive(!active)}
-          />
-        </div>
-      )
-  }, [data, active])
+
+  function compareData(newData) {
+    console.log("Program before update:", program)
+    console.log("New data:", newData)
+    const oldEmails = program.data.map((row) => row.email)
+    const newElements = newData.filter((row) => !Exist(row.email, oldEmails))
+    console.log("New elements:", newElements)
+    const updatedPrograms = programs.map((element) =>
+      element === program
+        ? { ...element, data: [...element.data, ...newElements] }
+        : element
+    )
+    console.log("Updated programs:", updatedPrograms)
+    setPrograms(updatedPrograms)
+  }
+  function Exist(s, t) {
+    let test = false
+    t.forEach((e) => {
+      if (e === s) {
+        test = true
+      }
+    })
+    return test
+  }
 
   const [sorting, setSorting] = useState([])
-  const finalData = useMemo(() => data, [data])
   const tableInstance = useReactTable({
-    columns: columns,
-    data: finalData,
+    columns:
+      program.data.length > 0
+        ? Object.keys(program.data[0]).map((column) => {
+            return { accessorKey: column, header: column }
+          })
+        : [],
+    data: program.data,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -116,14 +88,29 @@ const BasicTable = ({ programName }) => {
   return (
     <>
       <div className="database-upsection">
-        {jsx}
+        <div
+          className={
+            active
+              ? "database-success-message"
+              : "database-success-message hide"
+          }
+        >
+          <p>You found {rows} results</p>
+          <FaXmark
+            className="message-icon"
+            onClick={() => setActive(!active)}
+          />
+        </div>
         <div className="btn-group">
           <SearchBar filtering={filtering} setFiltering={setFiltering} />
           <label className="database-btn">
             <input
               type="file"
               accept=".xlsx,.xls,.csv"
-              onChange={(e) => handleFileUpload(e)}
+              onChange={(e) => {
+                handleFileUpload(e)
+                e.target.value = null // Reset the input value after selection
+              }}
               className="database-input"
             />
             Import
