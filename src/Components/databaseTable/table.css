@@ -58,3 +58,17 @@ tfoot td {
 .sort-copy {
   position: sticky;
 }
+.delete-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+.tab-btn {
+  padding: 5px 10px;
+  background-color: transparent;
+  border: 2px solid #203f8f;
+  border-radius: 20px;
+  color: #203f8f;
+  cursor: pointer;
+}
