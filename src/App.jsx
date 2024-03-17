@@ -28,7 +28,7 @@ function App() {
           path="/Dash"
           element={
             <ProtectedRoute isLogged={isLogged}>
-              <Dash isLogged={isLogged} />
+              <Dash/>
             </ProtectedRoute>
           }
         >

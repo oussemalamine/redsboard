@@ -41,7 +41,7 @@
 }
 .input-group-r {
   position: relative;
-  padding: 0.2em;
+  padding: 0;
   background-color: hsl(0, 0%, 95%);
   display: flex;
   gap: 0.5rem;
@@ -56,12 +56,11 @@ select {
   outline: none;
   border: none;
   background-color: hsl(0, 0%, 95%);
-  font-size: 1.2em;
+  font-size: 1rem;
 }
-select {
+/* select {
   flex: 1;
-  padding: 0.2em;
-}
+} */
 .icon-r {
   font-size: 0.8rem;
   background-color: hsl(0, 0%, 95%);
@@ -150,4 +149,42 @@ select {
   .formContainer2 {
     font-size: 0.7rem;
   }
+}
+.register-error {
+  min-width: 90%;
+  padding: 8px 20px;
+  min-height: auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  background-color: #fad4d1;
+  color: red;
+  border-radius: 2px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.phone-select-group {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  gap: 20px;
+}
+.register-suceess {
+  min-width: 90%;
+  padding: 8px 20px;
+  min-height: auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  background-color: #93e9be;
+  color: green;
+  border-radius: 2px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.input-group-r-select{
+  flex: 1;
+  justify-content: center;
 }
