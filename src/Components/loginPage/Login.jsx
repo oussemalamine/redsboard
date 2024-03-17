@@ -1,8 +1,8 @@
 //********************* import
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import img from "../Images/logo.png";
 import "./Login.css";
-import signinValidation from "./signupValidation";
+import signinValidation from "./signinValidation";
 import { useFormik } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,11 +11,13 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ParticlesBackground from "../ParticlesBackground";
 import { useDispatch, useSelector } from "react-redux";
-import { handleLogin, setLogged } from "../../app/features/login/loginSlice";
+import { handleLogin } from "../../app/features/login/loginSlice";
 import { useDebouncedCallback } from "use-debounce";
+import axiosInstance from "../axiosInstance";
+
 const initial_Values = {
   email: "",
   password: "",
@@ -24,22 +26,28 @@ const initial_Values = {
 function Login() {
   // ********Hooks declaration
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const { values, handleChange, handleSubmit, touched, errors } = useFormik({
+    initialValues: initial_Values,
+    validationSchema: signinValidation,
+    onSubmit: async (values) => {
+      console.log(values);
+      axiosInstance
+        .post("/login", values)
+        .then((response) => {
+          // Handle success
+          console.log("Authentication successful", response.data);
+          history.push("/Dash");
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Authentication failed", error);
+          // Show error message to the user
+        });
+    },
+  });
+
   const dispatch = useDispatch();
   const state = useSelector((state) => state.loginSlice);
-  const navigate = useNavigate();
-  const { values, handleChange, handleSubmit, touched, errors, isValid } =
-    useFormik({
-      initialValues: initial_Values,
-      validationSchema: signinValidation,
-      onSubmit: async (values) => {
-        console.log(values);
-        if (isValid) {
-          localStorage.setItem("isLogged", true);
-          dispatch(setLogged());
-          navigate("/Dash");
-        }
-      },
-    });
   console.log(state);
   //******* functions
   function handleVisiblity() {
@@ -48,12 +56,6 @@ function Login() {
   const handleStore = useDebouncedCallback((key, value) => {
     dispatch(handleLogin({ key, value }));
   }, 250);
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLogged") === "true";
-    if (isLoggedIn) {
-      navigate("/Dash");
-    }
-  }, []);
   return (
     <div className="formContainer1">
       <form onSubmit={handleSubmit} className="form" action="post">
@@ -116,12 +118,7 @@ function Login() {
           </label>
           <a href="#">Forgot Password?</a>
         </div>
-        <button className="btn" type="submit">
-          {" "}
-          <span>
-          </span>
-          Get Started
-        </button>
+        <input className="btn" type="submit" value="Get Started" />
         <p className="upLink">
           Not a member ?<Link to="/Register">Sign Up</Link>
         </p>

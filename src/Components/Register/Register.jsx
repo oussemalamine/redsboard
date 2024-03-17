@@ -1,7 +1,8 @@
+import React from "react";
 import logo from "../Images/logo.png";
 import { FaPhone, FaEnvelope, FaUser, FaLock } from "react-icons/fa";
+import signupValidation from "./signupValidation.js";
 import { useFormik } from "formik";
-import { signupValidation } from "./signupValidation.jsx";
 import Tooltip from "./Tooltip.jsx";
 import { Link } from "react-router-dom";
 import "./register.css";
@@ -9,6 +10,8 @@ import ParticlesBackground from "../ParticlesBackground";
 import { useDispatch, useSelector } from "react-redux";
 import { handleRegister } from "../../app/features/register/registerSlice.js";
 import { useDebouncedCallback } from "use-debounce";
+import axiosInstance from "../axiosInstance.js";
+
 const initialValues = {
   username: "",
   email: "",
@@ -17,31 +20,37 @@ const initialValues = {
   password: "",
   confirmation: "",
 };
-const onSubmit = async (values, actions) => {
-  console.log(values); /* these are the values send by the form  */
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  actions.resetForm();
-};
+
 function Register() {
-  const { values, handleChange, touched, handleSubmit, errors } = useFormik({
+  const { values, handleSubmit, handleChange, touched, errors } = useFormik({
     initialValues: initialValues,
     validationSchema: signupValidation,
-    onSubmit,
+    onSubmit: async (values, actions) => {
+      try {
+        console.log(values); /* these are the values send by the form  */
+
+        const sendData = await axiosInstance.post("/signup", values);
+        alert(sendData.data.info);
+        //actions.resetForm();
+      } catch (error) {
+        console.log(error);
+      }
+    },
   });
   const dispatch = useDispatch();
   const state = useSelector((state) => state.registerSlice);
-  console.log(state);
+  //console.log(state);
   const handleStore = useDebouncedCallback((key, value) => {
     dispatch(handleRegister({ key, value }));
   }, 250);
+
   return (
     <div className="formContainer2">
-      <ParticlesBackground />
       <div className="register-form">
         <h1 className="app-title">
           <img src={logo} alt="redstart logo-r" className="logo-r" />
         </h1>
-        <form action="#" className="form-r" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form-r" action="post">
           <h1 className="form-title">Create an account</h1>
           <div
             className={
@@ -182,7 +191,7 @@ function Register() {
               <Tooltip state={true} error={errors.role} />
             )}
           </div>
-          <button type="submit" className="btn-r">
+          <button type="submit" className="btn-r" value="signup">
             Sign Up
           </button>
           <Link to="/login" className="login-link">
