@@ -45,7 +45,7 @@ function Sidebar({ handleItemClick }) {
   }, []);
   return (
     <div
-      className={show || width < 800 ? "sidebar-active" : "sidebar"}
+      className={show || width < 1000 ? "sidebar-active" : "sidebar"}
       onClick={handleClick}
     >
       <div className="header-logo">

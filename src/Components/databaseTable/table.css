@@ -72,3 +72,9 @@ tfoot td {
   color: #203f8f;
   cursor: pointer;
 }
+.edit-input {
+  width: 70%;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 1px solid #044c54;
+}

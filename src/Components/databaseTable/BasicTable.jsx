@@ -213,6 +213,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
                       {isEditing ? (
                         <input
                           type="text"
+                          className="edit-input"
                           value={editedData[cellEl.column.id] || ""}
                           onChange={(e) =>
                             setEditedData({

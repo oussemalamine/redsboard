@@ -14,7 +14,6 @@
   padding: 0;
   margin: 0;
   font-family: "Roboto", sans-serif;
-  overflow: hidden;
 }
 /******************* Header ******************/
 .header-dash {
@@ -72,15 +71,9 @@
   cursor: pointer;
 }
 
-.header-list-container {
-  width: 20%;
-  height: 60%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
+
 .header-list {
-  width: 70%;
+  width: 20%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -93,8 +86,8 @@
   object-fit: contain;
 }
 .header-list .header-list-item{
-  width: 45px;
-  height: 45px;
+  width: 20%;
+  height: 50%;
   font-size: 1.5rem;
   display: flex;
   justify-content: center;
@@ -103,6 +96,7 @@
   border-radius: 50%;
   margin-left: 10px;
   cursor: pointer;
+  font-size: 100%;
 }
 /*************** End header ****************/
 

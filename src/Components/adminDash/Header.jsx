@@ -12,8 +12,7 @@ function Header({ selectedItem }) {
       <div className="header-title">
         <h3>{selectedItem}</h3>
       </div>
-      <SearchBar />
-      <div className="header-list-container">
+      <SearchBar />    
         <ul className="header-list">
           <li className="header-list-item">
             <Menu  />
@@ -25,7 +24,6 @@ function Header({ selectedItem }) {
             <IoIosNotifications style={{ color: "white" }} />
           </li>
         </ul>
-      </div>
     </header>
   );
 }
