@@ -1,0 +1,9 @@
+.MenuButton {
+  font-size: 100%;
+  background-color: transparent;
+  cursor: pointer;
+}
+.btnMenu {
+  background-color: transparent;
+  border: none;
+}
