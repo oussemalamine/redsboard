@@ -5,16 +5,10 @@ const loginSlice = createSlice({
   initialState: {
     email: "",
     password: "",
-    isLogged: localStorage.getItem("isLogged")
-      ? JSON.parse(localStorage.getItem("isLogged"))
-      : false,
   },
   reducers: {
     handleLogin(state, { payload: { key, value } }) {
       state[key] = value;
-    },
-    setLogged(state) {
-      state.isLogged = !state.isLogged;
     },
   },
 });

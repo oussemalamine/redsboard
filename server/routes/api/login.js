@@ -21,7 +21,7 @@ router.post("/login", async (req, res, next) => {
             error: error || "internal server errror",
           });
         }
-
+        req.session.username = user.username;
         return res.send({ user, info });
       });
     } catch (error) {

@@ -1,6 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
+const MongoDBSession = require("connect-mongodb-session")(session);
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -10,12 +13,14 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const signupRoute = require("./routes/api/signup");
 const loginRoute = require("./routes/api/login");
-
+const checkAuthRoute = require("./routes/api/checkAuth");
 require("./passport/index");
 
 app.use(express.json());
-
 // Enable CORS
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(
   cors({
     origin: "http://localhost:5173", // Allow the client app to access the server
@@ -23,15 +28,21 @@ app.use(
   })
 );
 
+const store = new MongoDBSession({
+  uri: db,
+  collection: "sessions",
+});
+
 app.use(
   session({
     secret: secret,
     resave: false,
-    saveUninitialized: false, // Don't create session until something stored
+    saveUninitialized: false,
+    store: store, // Don't create session until something stored
     cookie: {
       secure: false, // Requires https
       httpOnly: true, // Prevents client side JS from reading the cookie
-      maxAge: 1000 * 60 * 60 * 24, // Cookie will live for 24H
+      maxAge: 60000, // Cookie will live for 24H
     },
   })
 );
@@ -42,7 +53,7 @@ app.use(passport.session());
 // Routes
 app.post("/signup", signupRoute);
 app.post("/login", loginRoute);
-
+app.get("/checkAuth", checkAuthRoute);
 // Database + Server Connection Validation
 mongoose
   .connect(db)

@@ -23,7 +23,7 @@ const initial_Values = {
   password: "",
 };
 //************ Login Component
-function Login() {
+function Login({ setIsLogged }) {
   // ********Hooks declaration
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
@@ -37,28 +37,22 @@ function Login() {
     onSubmit: async (values) => {
       console.log(values);
       axiosInstance
-        .post("/login", values)
+        .post("/login", values,{ withCredentials: true })
         .then((response) => {
           console.log("Authentication successful", response.data);
           setError("");
+          setIsLogged(true);
           navigate("/Dash");
-          localStorage.setItem("isLogged", true);
-          dispatch(setLogged());
         })
         .catch((error) => {
           if (error.response) {
             setError(error.response.data.error);
           }
           console.log("Authentication failed", error);
+          setIsLogged(false);
         });
     },
   });
-  useEffect(() => {
-    const isLogin = localStorage.getItem("isLogged") === "true";
-    if (isLogin) {
-      navigate("/Dash");
-    }
-  }, []);
   //******* functions
   function handleVisiblity() {
     setPasswordVisible(!passwordVisible);
