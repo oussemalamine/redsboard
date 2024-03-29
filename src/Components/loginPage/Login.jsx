@@ -14,30 +14,32 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import ParticlesBackground from "../ParticlesBackground";
 import { useDispatch, useSelector } from "react-redux";
-import { handleLogin, setLogged } from "../../app/features/login/loginSlice";
+import { handleLogin } from "../../app/features/login/loginSlice";
 import { useDebouncedCallback } from "use-debounce";
 import axiosInstance from "../axiosInstance";
+import axios from "axios";
 import { GoAlertFill } from "react-icons/go";
 const initial_Values = {
   email: "",
   password: "",
 };
 //************ Login Component
-function Login({ setIsLogged }) {
+function Login({ isLogged, setIsLogged }) {
   // ********Hooks declaration
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const state = useSelector((state) => state.loginSlice);
-  console.log(state);
+
   const navigate = useNavigate();
+  axios.defaults.withCredentials = true;
   const { values, handleChange, handleSubmit, touched, errors } = useFormik({
     initialValues: initial_Values,
     validationSchema: signinValidation,
     onSubmit: async (values) => {
       console.log(values);
       axiosInstance
-        .post("/login", values,{ withCredentials: true })
+        .post("/login", values)
         .then((response) => {
           console.log("Authentication successful", response.data);
           setError("");
@@ -49,7 +51,6 @@ function Login({ setIsLogged }) {
             setError(error.response.data.error);
           }
           console.log("Authentication failed", error);
-          setIsLogged(false);
         });
     },
   });
@@ -60,6 +61,17 @@ function Login({ setIsLogged }) {
   const handleStore = useDebouncedCallback((key, value) => {
     dispatch(handleLogin({ key, value }));
   }, 250);
+  useEffect(() => {
+    const timeout = setTimeout(console.log(state), 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [state]);
+  useEffect(() => {
+    if (isLogged === true) {
+      navigate("/Dash");
+    }
+  }, []);
   return (
     <div className="formContainer1">
       <form onSubmit={handleSubmit} className="form" action="post">
@@ -131,7 +143,7 @@ function Login({ setIsLogged }) {
         </div>
         <input className="btn" type="submit" value="Get Started" />
         <p className="upLink">
-          Not a member ?<Link to="/Register">Sign Up</Link>
+          Not a member ?<Link to="/register">Sign Up</Link>
         </p>
       </form>
       <ParticlesBackground />

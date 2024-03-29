@@ -111,6 +111,7 @@ select {
   animation-duration: 200ms;
   animation-fill-mode: forwards;
   animation-timing-function: linear;
+  z-index: 3;
 }
 @keyframes animate-tooltip {
   0% {
@@ -184,7 +185,7 @@ select {
   font-size: 16px;
   margin-bottom: 10px;
 }
-.input-group-r-select{
+.input-group-r-select {
   flex: 1;
   justify-content: center;
 }

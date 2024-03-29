@@ -26,7 +26,6 @@ function Sidebar({ handleItemClick }) {
   }
   function popUp() {
     setShow(!show);
-    console.log(window.innerWidth);
   }
   function selectItem(itemName) {
     setActiveItem(itemName);

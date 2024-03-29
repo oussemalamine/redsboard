@@ -17,9 +17,7 @@ export default defineConfig({
     extensions: [".js", ".jsx", ".json"],
   },
   esbuild: {
-    loader: {
-      ".js": ".jsx",
-    },
     jsxFactory: "React.createElement", // Add this line
   },
 });
+

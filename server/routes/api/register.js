@@ -3,7 +3,7 @@ const passport = require("passport");
 
 const router = express.Router();
 
-router.post("/signup", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   passport.authenticate("signup", async (error, user, info) => {
     try {
       console.log("i'm here");

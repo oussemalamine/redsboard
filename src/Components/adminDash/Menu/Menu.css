@@ -4,6 +4,7 @@
   cursor: pointer;
 }
 .btnMenu {
-  background-color: transparent;
+  flex: 2;
+  background-color:transparent;
   border: none;
 }

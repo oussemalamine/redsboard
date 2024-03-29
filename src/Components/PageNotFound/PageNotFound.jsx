@@ -6,7 +6,7 @@ function PageNotFound() {
   const navigate = useNavigate();
 
   const handleRefresh = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -22,7 +22,6 @@ function PageNotFound() {
         <button onClick={handleRefresh} className="redirectBtn">
           Refresh
         </button>
-       
       </div>
     </div>
   );

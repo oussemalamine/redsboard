@@ -6,9 +6,9 @@ import "./Menu.css";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogged } from "../../../app/features/login/loginSlice";
+import axiosInstance from "../../axiosInstance";
 
-export default function PositionedMenu() {
+export default function PositionedMenu({ setIsLogged }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,11 +16,19 @@ export default function PositionedMenu() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleLogout = () => {
-    localStorage.setItem("isLogged", false);
-    dispatch(setLogged());
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.get("/logout").then((res) => {
+        if (res.data) {
+          setIsLogged(false);
+          navigate("/login");
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };

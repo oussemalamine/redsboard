@@ -15,6 +15,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import HandleFileName from "./HandleFileName";
+import Review from "./Review";
 const FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const FILE_EXTENTION = ".xlsx";
@@ -27,9 +28,28 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   const [filename, setFilename] = useState("");
   const [editid, setEditId] = useState(-1);
   const [editedData, setEditedData] = useState({});
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [checked, setChecked] = useState([]);
+  const [checkedRows, setCheckedRows] = useState([]);
   const [showFileNameInput, setShowFileNameInput] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [reviewData, setReviewData] = useState();
   console.log("EditId :", editid);
-
+  console.log(checked);
+  console.log(checkedRows);
+  const initialColumns = [
+    { id: "checkbox", accessorKey: "checkbox", header: "checkbox" },
+  ];
+  if (program.data.length > 0) {
+    const dynamicColumns = Object.keys(program.data[0]).map((column) => ({
+      id: column,
+      accessorKey: column,
+      header: column,
+    }));
+    initialColumns.push(...dynamicColumns);
+  }
+  // console.log("data", program.data);
+  console.log();
   const handleFileUpload = (e) => {
     console.log("upload function triggered");
     const reader = new FileReader();
@@ -43,7 +63,22 @@ const BasicTable = ({ setPrograms, program, programs }) => {
       compareData(parseData);
     };
   };
-
+  const handleAllCheck = () => {
+    setSelectAllChecked(!selectAllChecked);
+    setChecked([]);
+    setCheckedRows([]);
+  };
+  const handleCheck = (id) => {
+    if (checked.includes(id)) {
+      const newChecked = checked.filter((item) => item !== id);
+      setChecked(newChecked);
+    } else {
+      setChecked((prevState) => [...prevState, id]);
+    }
+  };
+  const handleCheckRows = (id) => {
+    setCheckedRows((prevState) => [...prevState, id]);
+  };
   function compareData(newData) {
     console.log("Program before update:", program);
     console.log("New data:", newData);
@@ -71,12 +106,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
 
   const [sorting, setSorting] = useState([]);
   const tableInstance = useReactTable({
-    columns:
-      program.data.length > 0
-        ? Object.keys(program.data[0]).map((column) => {
-            return { accessorKey: column, header: column };
-          })
-        : [],
+    columns: initialColumns,
     data: program.data,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -104,7 +134,13 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   const handleSubmitFileName = (newFilename) => {
     setFilename(newFilename);
     setShowFileNameInput(false);
-    handleExport(program.data, newFilename, FILE_TYPE, FILE_EXTENTION);
+    if (checkedRows.length > 0) {
+      handleExport(checkedRows, newFilename, FILE_TYPE, FILE_EXTENTION);
+      setCheckedRows([]);
+      setChecked([]);
+    } else {
+      handleExport(program.data, newFilename, FILE_TYPE, FILE_EXTENTION);
+    }
   };
   const handleEditRow = (rowId) => {
     setEditId(rowId);
@@ -128,14 +164,23 @@ const BasicTable = ({ setPrograms, program, programs }) => {
     setEditId(-1);
     setEditedData({});
   };
-  console.log(showFileNameInput);
   return (
     <>
       {showFileNameInput && (
         <HandleFileName
           setShowFileNameInput={setShowFileNameInput}
+          showFileNameInput={showFileNameInput}
           onSubmit={handleSubmitFileName}
         />
+      )}
+      {showModal && (
+        <div className="modal-backdrop">
+          <Review
+            setShowModal={setShowModal}
+            showModal={showModal}
+            data={program.data[reviewData]}
+          />
+        </div>
       )}
       <div className="database-upsection">
         <div
@@ -146,11 +191,22 @@ const BasicTable = ({ setPrograms, program, programs }) => {
           }
         >
           <p>You found {program.data.length} results</p>
+
           <FaXmark
             className="message-icon"
             onClick={() => setActive(!active)}
           />
         </div>
+
+        {checked.length > 0 || selectAllChecked ? (
+          <div className="database-success-message">
+            <p>
+              {checked.length > 0 ? checked.length : program.data.length} rows
+              selected
+            </p>
+          </div>
+        ) : null}
+
         <div className="btn-group">
           <SearchBar filtering={filtering} setFiltering={setFiltering} />
           <label className="database-btn">
@@ -176,6 +232,20 @@ const BasicTable = ({ setPrograms, program, programs }) => {
             return (
               <tr key={headerEl.id}>
                 {headerEl.headers.map((columnEl) => {
+                  if (columnEl.id === "checkbox") {
+                    return (
+                      <th key={columnEl.id}>
+                        <input
+                          className="checkbox-header"
+                          type="checkbox"
+                          name=""
+                          id=""
+                          checked={selectAllChecked}
+                          onChange={handleAllCheck}
+                        />
+                      </th>
+                    );
+                  }
                   return (
                     <th
                       key={columnEl.id}
@@ -207,7 +277,23 @@ const BasicTable = ({ setPrograms, program, programs }) => {
             const isEditing = editid === rowEl.original.id;
             return (
               <tr key={rowEl.id}>
-                {rowEl.getVisibleCells().map((cellEl) => {
+                {rowEl.getVisibleCells().map((cellEl, indexEl) => {
+                  if (indexEl === 0)
+                    return (
+                      <td key={cellEl.id}>
+                        <input
+                          className="checkbox-input"
+                          type="checkbox"
+                          checked={
+                            checked.includes(cellEl.id) || selectAllChecked
+                          }
+                          onChange={() => {
+                            handleCheck(cellEl.id);
+                            handleCheckRows(rowEl.original);
+                          }}
+                        />
+                      </td>
+                    );
                   return (
                     <td key={cellEl.id}>
                       {isEditing ? (
@@ -258,7 +344,15 @@ const BasicTable = ({ setPrograms, program, programs }) => {
                 </td>
                 <td>
                   {isEditing ? null : (
-                    <button className="review-btn tab-btn">Review</button>
+                    <button
+                      onClick={() => {
+                        setShowModal(!showModal);
+                        setReviewData(rowEl.original.id);
+                      }}
+                      className="review-btn tab-btn"
+                    >
+                      Review
+                    </button>
                   )}
                 </td>
               </tr>

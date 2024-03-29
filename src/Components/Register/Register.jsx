@@ -216,11 +216,12 @@ function Register() {
           <button type="submit" className="btn-r" value="signup">
             Sign Up
           </button>
-          <Link to="/" className="login-link">
+          <Link to="/login" className="login-link">
             Already have an account?
           </Link>
         </form>
       </div>
+      <ParticlesBackground className="particles" />
     </div>
   );
 }
