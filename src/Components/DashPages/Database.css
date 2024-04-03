@@ -116,6 +116,9 @@ input[type="file"] {
   overflow: scroll;
   padding: 10px;
 }
+.select-container {
+  position: relative;
+}
 .selectProgram {
   background-color: transparent;
   border: 2px solid #044c54;
@@ -129,7 +132,7 @@ input[type="file"] {
   position: absolute;
   right: 0;
   top: 0;
-  transform: translateX(10%) translateY(-120%);
+  transform: translateX(10%) translateY(120%);
   padding: 0.5em;
   display: none;
   background-color: #b4263c;
@@ -142,10 +145,10 @@ input[type="file"] {
 }
 @keyframes animate-tooltip {
   0% {
-    transform: scale(0) translateX(10%) translateY(-120%);
+    transform: scale(0) translateX(10%) translateY(120%);
   }
   100% {
-    transform: scale(1) translateX(10%) translateY(-120%);
+    transform: scale(1) translateX(10%) translateY(120%);
   }
 }
 .tooltip p {
@@ -155,10 +158,11 @@ input[type="file"] {
 }
 .arrow {
   position: absolute;
-  bottom: -50%;
+  top: 0;
   left: 50%;
+  transform: translateX(-50%) translateY(-100%);
   border: 10px solid transparent;
-  border-top-color: #b4263c;
+  border-bottom-color: #b4263c;
 }
 .visible {
   display: block;

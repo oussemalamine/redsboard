@@ -55,7 +55,7 @@ function Database() {
           Delete Program
         </button>
         {/* {error && <div className="error">Program Exist</div>} */}
-        <div>
+        <div className="select-container">
           {/* <label htmlFor="selectProgram">Select a Program</label> */}
           {error && <Tooltip state={true} error="Program already exists" />}
           <select

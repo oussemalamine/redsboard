@@ -28,8 +28,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   const [filename, setFilename] = useState("");
   const [editid, setEditId] = useState(-1);
   const [editedData, setEditedData] = useState({});
-  const [selectAllChecked, setSelectAllChecked] = useState(false);
-  const [checked, setChecked] = useState([]);
+  const [checked, setChecked] = useState(false);
   const [checkedRows, setCheckedRows] = useState([]);
   const [showFileNameInput, setShowFileNameInput] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -37,6 +36,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   console.log("EditId :", editid);
   console.log(checked);
   console.log(checkedRows);
+  
   const initialColumns = [
     { id: "checkbox", accessorKey: "checkbox", header: "checkbox" },
   ];
@@ -63,10 +63,10 @@ const BasicTable = ({ setPrograms, program, programs }) => {
       compareData(parseData);
     };
   };
-  const handleAllCheck = () => {
+ /* const handleAllCheck = () => {
     setSelectAllChecked(!selectAllChecked);
-    setChecked([]);
-    setCheckedRows([]);
+    setChecked(program.map((row) => row.id));
+    setCheckedRows(program.map((row) => row.id));
   };
   const handleCheck = (id) => {
     if (checked.includes(id)) {
@@ -78,6 +78,23 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   };
   const handleCheckRows = (id) => {
     setCheckedRows((prevState) => [...prevState, id]);
+  };*/
+ 
+  const handleCheckAll = () => {
+    if(checked)
+    setCheckedRows(program.data.map((row) => row.id));
+  }
+  useEffect(() => {
+    handleCheckAll();
+  },[checked])
+  const handleCheck = (id) => {
+    setChecked(false)
+    if (checkedRows.includes(id)) {
+      const newChecked = checkedRows.filter((item) => item !== id);
+      setCheckedRows(newChecked);
+    } else {
+      setCheckedRows((prevState) => [...prevState, id]);
+    }
   };
   function compareData(newData) {
     console.log("Program before update:", program);
@@ -135,12 +152,10 @@ const BasicTable = ({ setPrograms, program, programs }) => {
     setFilename(newFilename);
     setShowFileNameInput(false);
     if (checkedRows.length > 0) {
-      handleExport(checkedRows, newFilename, FILE_TYPE, FILE_EXTENTION);
+      handleExport(checkedRows.map((id) => program.data.find((row) => row.id === id)), newFilename, FILE_TYPE, FILE_EXTENTION);
       setCheckedRows([]);
-      setChecked([]);
-    } else {
-      handleExport(program.data, newFilename, FILE_TYPE, FILE_EXTENTION);
-    }
+      setChecked(false);
+    } 
   };
   const handleEditRow = (rowId) => {
     setEditId(rowId);
@@ -207,7 +222,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
           />
         </div>
 
-        {checked.length > 0 || selectAllChecked ? (
+        {checkedRows.length > 0 ? (
           <div className="database-success-message">
             <p>
               {checked.length > 0 ? checked.length : program.data.length} rows
@@ -250,8 +265,10 @@ const BasicTable = ({ setPrograms, program, programs }) => {
                             type="checkbox"
                             name=""
                             id=""
-                            checked={selectAllChecked}
-                            onChange={handleAllCheck}
+                            checked={checked}
+                            onChange={() => {
+                             setChecked((checked)=>!checked);
+                            }}
                           />
                         </th>
                       );
@@ -295,11 +312,11 @@ const BasicTable = ({ setPrograms, program, programs }) => {
                             className="checkbox-input"
                             type="checkbox"
                             checked={
-                              checked.includes(cellEl.id) || selectAllChecked
+                              checkedRows.includes(cellEl.row.original.id)
                             }
                             onChange={() => {
-                              handleCheck(cellEl.id);
-                              handleCheckRows(rowEl.original);
+                              
+                              handleCheck(cellEl.row.original.id);
                             }}
                           />
                         </td>
