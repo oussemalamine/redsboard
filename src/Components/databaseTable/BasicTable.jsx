@@ -83,6 +83,8 @@ const BasicTable = ({ setPrograms, program, programs }) => {
   const handleCheckAll = () => {
     if(checked)
     setCheckedRows(program.data.map((row) => row.id));
+    else if(!checked && checkedRows.length == program.data.length)
+    setCheckedRows([]);
   }
   useEffect(() => {
     handleCheckAll();
@@ -225,7 +227,7 @@ const BasicTable = ({ setPrograms, program, programs }) => {
         {checkedRows.length > 0 ? (
           <div className="database-success-message">
             <p>
-              {checked.length > 0 ? checked.length : program.data.length} rows
+              {checkedRows.length} rows
               selected
             </p>
           </div>

@@ -38,7 +38,7 @@ function App() {
       });
     };
     checkAuth();
-  }, []);
+  }, [isLogged]);
 
   console.log(isLogged);
 

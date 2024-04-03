@@ -61,6 +61,7 @@ function User({ username, data }) {
       (completedFields.length / fieldsToCheck.length) * 100;
     return completionPercentage.toFixed(2);
   };
+  /*
   useEffect(() => {
     if (Object.keys(editedData).length > 0) {
       // Check if editedData is not empty
@@ -71,7 +72,7 @@ function User({ username, data }) {
         } at ${new Date().toLocaleString()}`,
       ]);
     }
-  }, [editedData]);
+  }, [editedData]);*/
 
   const handleEdit = () => {
     setEditMode(true);
@@ -84,6 +85,15 @@ function User({ username, data }) {
       const response = await axiosInstance.put(`/users/${user._id}`, user);
       if (response.status === 200) {
         console.log("User updated successfully:", response.data);
+        if (Object.keys(editedData).length > 0) {
+          // Check if editedData is not empty
+          setUpdateLog((prevUpdateLog) => [
+            ...prevUpdateLog,
+            `User update ${
+              Object.keys(editedData)[0]
+            } at ${new Date().toLocaleString()}`,
+          ]);
+        }
       } else {
         console.error("Failed to update user:", response.statusText);
       }
