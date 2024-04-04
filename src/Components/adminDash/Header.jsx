@@ -6,6 +6,7 @@ import face from "../Images/face.jpg";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import { FaMessage } from "react-icons/fa6";
 import axiosInstance from "../axiosInstance";
+import img from "../Images/user.png";
 
 function Header({ selectedItem, setIsLogged }) {
   const handleLogout = async () => {
@@ -35,6 +36,9 @@ function Header({ selectedItem, setIsLogged }) {
         </li>
         <li className="header-list-item">
           <RiLogoutBoxRFill style={{ color: "white" }} onClick={handleLogout} />
+        </li>
+        <li className="header-list-item">
+          <img src={img} alt="" />
         </li>
       </ul>
     </header>

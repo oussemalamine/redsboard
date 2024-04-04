@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const User = require("../../database/models/AdminSchema");
 
 // Multer middleware for handling multipart/form-data (used for file uploads)
@@ -19,6 +20,16 @@ router.put("/users/:userId", upload.single("image"), async (req, res) => {
     // If user not found, return 404
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(
+      userDataToUpdate.password,
+      user.password
+    );
+    if (!match) {
+      const hashedPassword = await bcrypt.hash(userDataToUpdate.password, 10);
+      userDataToUpdate.password = hashedPassword;
+      userDataToUpdate.confirmation = hashedPassword;
     }
 
     // Update user data

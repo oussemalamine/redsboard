@@ -14,6 +14,8 @@ import { FaIdCard } from "react-icons/fa";
 import { FcTreeStructure } from "react-icons/fc";
 import { FcBusinessman } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
+import { IoMail } from "react-icons/io5";
+import EditPassword from "./EditPassword";
 function User({ username, data }) {
   const [user, setUser] = useState();
   const [image, setImage] = useState(null);
@@ -22,6 +24,7 @@ function User({ username, data }) {
   const [updateLog, setUpdateLog] = useState([]);
   const [editedData, setEditedData] = useState({});
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   console.log("image :", image);
   console.log("editedData: ", editedData);
   const formatDateTime = (dateTimeString) => {
@@ -41,6 +44,7 @@ function User({ username, data }) {
       [name]: value,
     }));
   };
+  console.log("editedData", editedData);
   const calculateCompletionPercentage = () => {
     const fieldsToCheck = [
       "role",
@@ -90,7 +94,7 @@ function User({ username, data }) {
           setUpdateLog((prevUpdateLog) => [
             ...prevUpdateLog,
             `User update ${
-              Object.keys(editedData)[0]
+              Object.keys(editedData)[Object.keys(editedData).length - 1]
             } at ${new Date().toLocaleString()}`,
           ]);
         }
@@ -176,10 +180,16 @@ function User({ username, data }) {
       {open ? (
         <EditUser setOpen={setOpen} user={user} setUser={setUser} />
       ) : null}
+      {open2 ? (
+        <EditPassword setOpen={setOpen2} user={user} setUser={setUser} />
+      ) : null}
       <div className="user-information1">
         <img src={user.image ? user.image : img} alt="" />
         <h3>{user.username}</h3>
-        <p className="email">{user.email}</p>
+        <p className="exp">
+          <GiRank3 />
+          Exp points:{user.Exp}
+        </p>
         <div className="linkedin-wrapper">
           <label htmlFor="LinkedIn">
             <FaLinkedin />
@@ -233,7 +243,7 @@ function User({ username, data }) {
                 type="text"
                 className="role"
                 name="role"
-                defaultValue={user.role}
+                value={user.role}
                 onChange={handleChange}
               />
             </div>
@@ -244,7 +254,7 @@ function User({ username, data }) {
                 type="text"
                 className="department"
                 name="department"
-                defaultValue={user.department}
+                value={user.department}
                 onChange={handleChange}
               />
             </div>
@@ -255,7 +265,7 @@ function User({ username, data }) {
                 type="text"
                 className="cin"
                 name="cin"
-                defaultValue={user.cin}
+                value={user.cin}
                 onChange={handleChange}
               />
             </div>
@@ -266,7 +276,7 @@ function User({ username, data }) {
                 type="text"
                 className="matricule"
                 name="matricule"
-                defaultValue={user.matricule}
+                value={user.matricule}
                 onChange={handleChange}
               />
             </div>
@@ -332,7 +342,7 @@ function User({ username, data }) {
                   type="text"
                   className="phone"
                   name="phone"
-                  defaultValue={user.phone}
+                  value={user.phone}
                   onChange={handleChange}
                 />
               </div>
@@ -343,7 +353,8 @@ function User({ username, data }) {
                   type="text"
                   className="adress"
                   name="adress"
-                  defaultValue={user.adress}
+                  value={user.adress}
+                  onChange={handleChange}
                 />
               </div>
               <div className="info-item3  info-item">
@@ -353,29 +364,19 @@ function User({ username, data }) {
                   type="text"
                   className="birthday"
                   name="birthday"
-                  defaultValue={user.birthday}
+                  value={user.birthday}
                   onChange={handleChange}
                 />
               </div>
               <div className="info-item4  info-item">
                 {" "}
-                <label htmlFor="exp">Exp point:</label>
+                <label htmlFor="exp">Email:</label>
                 <input
                   type="text"
-                  className="exp"
-                  name="exp"
-                  defaultValue={user.exp}
+                  className="email"
+                  name="email"
+                  value={user.email}
                   onChange={handleChange}
-                />
-              </div>
-              <div className="info-item5  info-item">
-                {" "}
-                <label htmlFor="password">Password:</label>
-                <input
-                  type="text"
-                  className="password"
-                  name="password"
-                  defaultValue={user.password}
                 />
               </div>
               <div className="button">
@@ -418,21 +419,24 @@ function User({ username, data }) {
               <div className="info-item4  info-item">
                 {" "}
                 <label htmlFor="exp">
-                  <GiRank3 />
-                  Exp point:
+                  <IoMail />
+                  Email:
                 </label>
-                <p className="exp">{user.exp}</p>
+                <p className="email">{user.email}</p>
               </div>
               <div className="info-item5  info-item">
                 {" "}
                 <label htmlFor="password">
                   <RiLockPasswordFill /> Password:
                 </label>
-                <p className="password">{user.password}</p>
+                <p className="password">*********</p>
               </div>
               <div className="button">
                 <button className="edit-btn" onClick={handleEditMode}>
                   Edit
+                </button>
+                <button className="confirm-btn" onClick={() => setOpen2(true)}>
+                  Edit Password
                 </button>
               </div>
             </>

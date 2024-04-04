@@ -133,6 +133,14 @@
   align-items: center;
   border-bottom: 1px solid grey;
 }
+.info-item5 {
+  grid-area: "info-item5";
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .button {
   grid-area: "button";
   width: 100%;

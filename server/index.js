@@ -17,6 +17,7 @@ const checkAuthRoute = require("./routes/api/checkAuth");
 const logoutRoute = require("./routes/api/logout");
 const usersRoute = require("./routes/api/users");
 const UpdateUser = require("./routes/api/UpdateUser");
+const checkPass = require("./routes/api/checkPass");
 require("./passport/index");
 app.use(express.json());
 // Enable CORS
@@ -61,7 +62,9 @@ app.post("/login", loginRoute);
 app.get("/login", checkAuthRoute);
 app.get("/logout", logoutRoute);
 app.get("/users", usersRoute);
+app.get("/checkPass", checkPass);
 app.put("/users/:userId", UpdateUser);
+
 // Database + Server Connection Validation
 mongoose
   .connect(db)
