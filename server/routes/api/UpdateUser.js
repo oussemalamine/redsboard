@@ -11,7 +11,6 @@ const upload = multer();
 router.put("/users/:userId", upload.single("image"), async (req, res) => {
   const { userId } = req.params;
   const userDataToUpdate = req.body;
-  const imageData = req.file; // Uploaded image data
 
   try {
     // Find the user by ID
@@ -21,12 +20,16 @@ router.put("/users/:userId", upload.single("image"), async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (req.file) {
+      // Process image upload
+      // Update user's image field
+      userDataToUpdate.image = req.file.path; // Adjust as per your file storage setup
+    }
 
-    const match = await bcrypt.compare(
-      userDataToUpdate.password,
-      user.password
-    );
-    if (!match) {
+    if (
+      userDataToUpdate.password &&
+      userDataToUpdate.password !== user.password
+    ) {
       const hashedPassword = await bcrypt.hash(userDataToUpdate.password, 10);
       userDataToUpdate.password = hashedPassword;
       userDataToUpdate.confirmation = hashedPassword;
@@ -36,13 +39,6 @@ router.put("/users/:userId", upload.single("image"), async (req, res) => {
     user = await User.findByIdAndUpdate(userId, userDataToUpdate, {
       new: true,
     });
-
-    // Save image data if uploaded
-    if (imageData) {
-      user.image.data = imageData.buffer;
-      user.image.contentType = imageData.mimetype;
-      await user.save();
-    }
 
     // Return the updated user
     res.json(user);

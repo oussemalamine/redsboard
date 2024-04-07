@@ -15,6 +15,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import PageNotFound from "./Components/PageNotFound/PageNotFound";
 import axiosInstance from "./Components/axiosInstance";
 import axios from "axios";
+import "react-image-crop/dist/ReactCrop.css";
 function App() {
   const [isLogged, setIsLogged] = useState(false);
   const [username, setUsername] = useState("");

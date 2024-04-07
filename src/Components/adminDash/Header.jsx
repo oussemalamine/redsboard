@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 import { IoSettings } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
-import face from "../Images/face.jpg";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import { FaMessage } from "react-icons/fa6";
 import axiosInstance from "../axiosInstance";
 import img from "../Images/user.png";
+import { FaUser } from "react-icons/fa";
 
 function Header({ selectedItem, setIsLogged }) {
   const handleLogout = async () => {
@@ -38,7 +38,7 @@ function Header({ selectedItem, setIsLogged }) {
           <RiLogoutBoxRFill style={{ color: "white" }} onClick={handleLogout} />
         </li>
         <li className="header-list-item">
-          <img src={img} alt="" />
+          <FaUser style={{ color: "white" }} />
         </li>
       </ul>
     </header>

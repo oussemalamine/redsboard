@@ -16,17 +16,17 @@ import { FcBusinessman } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoMail } from "react-icons/io5";
 import EditPassword from "./EditPassword";
+import PhotoModal from "./PhotoModal";
 function User({ username, data }) {
   const [user, setUser] = useState();
   const [image, setImage] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editMode2, setEditMode2] = useState(false);
   const [updateLog, setUpdateLog] = useState([]);
-  const [editedData, setEditedData] = useState({});
+  const [editedData, setEditedData] = useState([]);
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  console.log("image :", image);
-  console.log("editedData: ", editedData);
+  const [Upload, UploadPhoto] = useState(false);
   const formatDateTime = (dateTimeString) => {
     const dateTime = new Date(dateTimeString);
     const formattedDate = dateTime.toLocaleDateString();
@@ -39,12 +39,21 @@ function User({ username, data }) {
       ...prevUser,
       [name]: value,
     }));
-    setEditedData((prevEditedData) => ({
-      ...prevEditedData,
-      [name]: value,
-    }));
+    console.log("UpdatedLog :", updateLog);
+    setEditedData((prev) => {
+      if (prev === null) return [name];
+      const index = prev.indexOf(name);
+      if (index !== -1) {
+        // If name exists, update it
+        const updatedData = [...prev];
+        updatedData[index] = name;
+        return updatedData;
+      } else {
+        // If name doesn't exist, add it
+        return [...prev, name];
+      }
+    });
   };
-  console.log("editedData", editedData);
   const calculateCompletionPercentage = () => {
     const fieldsToCheck = [
       "role",
@@ -65,18 +74,6 @@ function User({ username, data }) {
       (completedFields.length / fieldsToCheck.length) * 100;
     return completionPercentage.toFixed(2);
   };
-  /*
-  useEffect(() => {
-    if (Object.keys(editedData).length > 0) {
-      // Check if editedData is not empty
-      setUpdateLog((prevUpdateLog) => [
-        ...prevUpdateLog,
-        `User update ${
-          Object.keys(editedData)[0]
-        } at ${new Date().toLocaleString()}`,
-      ]);
-    }
-  }, [editedData]);*/
 
   const handleEdit = () => {
     setEditMode(true);
@@ -86,18 +83,45 @@ function User({ username, data }) {
   };
   const handleConfirm = async () => {
     try {
-      const response = await axiosInstance.put(`/users/${user._id}`, user);
+      const updatedData = {};
+      editedData.forEach((field) => {
+        updatedData[field] = user[field];
+      });
+      const response = await axiosInstance.put(
+        `/users/${user._id}`,
+        updatedData,
+        {
+          withCredentials: true,
+        }
+      );
       if (response.status === 200) {
         console.log("User updated successfully:", response.data);
-        if (Object.keys(editedData).length > 0) {
+        if (editedData.length > 0) {
           // Check if editedData is not empty
-          setUpdateLog((prevUpdateLog) => [
-            ...prevUpdateLog,
-            `User update ${
-              Object.keys(editedData)[Object.keys(editedData).length - 1]
-            } at ${new Date().toLocaleString()}`,
-          ]);
+          editedData.forEach((element) => {
+            const currentDate = new Date().toLocaleDateString();
+            setUpdateLog((prevUpdateLog) => {
+              const updatedLogs = [...prevUpdateLog];
+              const existingLogIndex = updatedLogs.findIndex(
+                (log) => log.date === currentDate
+              );
+              if (existingLogIndex !== -1) {
+                updatedLogs[existingLogIndex].events.push(
+                  `User update ${element} at ${new Date().toLocaleTimeString()}`
+                );
+              } else {
+                updatedLogs.push({
+                  date: currentDate,
+                  events: [
+                    `User update ${element} at ${new Date().toLocaleTimeString()}`,
+                  ],
+                });
+              }
+              return updatedLogs;
+            });
+          });
         }
+        setEditedData([]);
       } else {
         console.error("Failed to update user:", response.statusText);
       }
@@ -108,9 +132,44 @@ function User({ username, data }) {
   };
   const handleConfirm2 = async () => {
     try {
-      const response = await axiosInstance.put(`/users/${user._id}`, user);
+      const updatedData = {};
+      editedData.forEach((field) => {
+        updatedData[field] = user[field];
+      });
+      const response = await axiosInstance.put(
+        `/users/${user._id}`,
+        updatedData
+      );
       if (response.status === 200) {
         console.log("User updated successfully:", response.data);
+        if (editedData.length > 0) {
+          // Check if editedData is not empty
+          editedData.forEach((element) => {
+            const currentDate = new Date();
+            const tomorrow = currentDate.setDate(currentDate.getDate() + 1);
+            const tomorrowDate = new Date(tomorrow).toLocaleDateString();
+            setUpdateLog((prevUpdateLog) => {
+              const updatedLogs = [...prevUpdateLog];
+              const existingLogIndex = updatedLogs.findIndex(
+                (log) => log.date === tomorrowDate
+              );
+              if (existingLogIndex !== -1) {
+                updatedLogs[existingLogIndex].events.push(
+                  `User update ${element} at ${new Date().toLocaleTimeString()}`
+                );
+              } else {
+                updatedLogs.push({
+                  date: tomorrowDate,
+                  events: [
+                    `User update ${element} at ${new Date().toLocaleTimeString()}`,
+                  ],
+                });
+              }
+              return updatedLogs;
+            });
+          });
+        }
+        setEditedData(null);
       } else {
         console.error("Failed to update user:", response.statusText);
       }
@@ -132,6 +191,26 @@ function User({ username, data }) {
 
       if (response.status === 200) {
         console.log("User photo updated successfully:", response.data);
+        const currentDate = new Date().toLocaleDateString();
+        setUpdateLog((prevUpdateLog) => {
+          const updatedLogs = [...prevUpdateLog];
+          const existingLogIndex = updatedLogs.findIndex(
+            (log) => log.date === currentDate
+          );
+          if (existingLogIndex !== -1) {
+            updatedLogs[existingLogIndex].events.push(
+              `User update photo at ${new Date().toLocaleTimeString()}`
+            );
+          } else {
+            updatedLogs.push({
+              date: currentDate,
+              events: [
+                `User update photo at ${new Date().toLocaleTimeString()}`,
+              ],
+            });
+          }
+          return updatedLogs;
+        });
         setUser((prevUser) => ({
           ...prevUser,
           image: response.data.image,
@@ -143,17 +222,6 @@ function User({ username, data }) {
       console.error("Error updating user photo:", error.message);
     }
     setImage(null);
-  };
-
-  const handleChangePhoto = (e) => {
-    setImage(e.target.files[0]);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageDataUrl = reader.result;
-      // Update the image state directly
-      setImage(imageDataUrl);
-    };
-    reader.readAsDataURL(e.target.files[0]);
   };
   useEffect(() => {
     const fetchUserData = async () => {
@@ -170,21 +238,42 @@ function User({ username, data }) {
     };
     fetchUserData();
   }, [username]);
-  console.log("user:", user);
   if (!user) {
     return null; // Or you can render a loading indicator
   }
   const completionPercentage = calculateCompletionPercentage();
   return (
     <div className="user-container">
+      {Upload ? (
+        <PhotoModal setImage={setImage} UploadPhoto={UploadPhoto} />
+      ) : null}
       {open ? (
-        <EditUser setOpen={setOpen} user={user} setUser={setUser} />
+        <div className="editUser-container">
+          <EditUser
+            setOpen={setOpen}
+            user={user}
+            setUser={setUser}
+            setUpdateLog={setUpdateLog}
+          />
+        </div>
       ) : null}
       {open2 ? (
-        <EditPassword setOpen={setOpen2} user={user} setUser={setUser} />
+        <div className="editUser-container">
+          {" "}
+          <EditPassword setOpen={setOpen2} user={user} />
+        </div>
       ) : null}
       <div className="user-information1">
-        <img src={user.image ? user.image : img} alt="" />
+        <div className="photo-container">
+          <img src={image ? image : user.image ? user.image : img} alt="" />
+          <button
+            onClick={() => UploadPhoto(true)}
+            className="upload-photo-edit"
+          >
+            <MdEdit />
+          </button>
+        </div>
+
         <h3>{user.username}</h3>
         <p className="exp">
           <GiRank3 />
@@ -203,23 +292,14 @@ function User({ username, data }) {
             <button className="confirm-btn" onClick={handleConfirmPhoto}>
               confirm
             </button>
+            <butto className="edit-btn" onClick={() => setImage(null)}>
+              Cancel
+            </butto>
           </div>
         ) : (
           <div className="btns">
-            <label className="upload-image-btn">
-              <input
-                type="file"
-                accept="image/*"
-                className="upload-image-input"
-                onChange={handleChangePhoto}
-              />
-              Upload Image
-            </label>
-            <button className="edit-personal-btn">
-              <MdEdit
-                style={{ color: "#0077cc" }}
-                onClick={() => setOpen(true)}
-              />
+            <button className="edit-personal-btn" onClick={() => setOpen(true)}>
+              <MdEdit style={{ color: "#044c54" }} />
             </button>
           </div>
         )}
@@ -228,7 +308,7 @@ function User({ username, data }) {
           <div
             className="indicator"
             style={{
-              background: `linear-gradient(to right, #0077cc ${completionPercentage}%, transparent ${completionPercentage}%)`,
+              background: `linear-gradient(to right, #044c54 ${completionPercentage}%, transparent ${completionPercentage}%)`,
             }}
           ></div>
           {completionPercentage}% Completed
@@ -443,23 +523,33 @@ function User({ username, data }) {
           )}
         </div>
         <div className="inf2">
-          <h3>History</h3>
-          <div className="history-container">
-            <div className="session-information">
-              <h2>Session Information</h2>
-              <div>
-                <h3>Logged In: </h3>
-                {formatDateTime(data.loginTime)}
-              </div>
-              <div>
-                <h3>Session Expiry Time: </h3>
-                {formatDateTime(data.expiryTime)}
-              </div>
+          <div className="session-information">
+            <h2>Session Information</h2>
+            <div>
+              <h3>Logged In: </h3>
+              {formatDateTime(data.loginTime)}
             </div>
-            <div className="changes">
-              {updateLog.map((element, index) => (
-                <div key={index}>{element}</div>
-              ))}
+            <div>
+              <h3>Session Expiry Time: </h3>
+              {formatDateTime(data.expiryTime)}
+            </div>
+          </div>
+          <div className="changes">
+            <h2 className="history-title">History</h2>
+            <div className="history-container">
+              {updateLog.map((log) => {
+                return (
+                  <div className="history-item">
+                    {" "}
+                    <h3>{log.date}</h3>
+                    <ul>
+                      {log.events.map((event) => {
+                        return <li>{event}</li>;
+                      })}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

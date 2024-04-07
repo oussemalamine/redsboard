@@ -3,7 +3,7 @@ const express = require("express");
 const session = require("express-session");
 const MongoDBSession = require("connect-mongodb-session")(session);
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); // Import body-parser
 const passport = require("passport");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -19,16 +19,18 @@ const usersRoute = require("./routes/api/users");
 const UpdateUser = require("./routes/api/UpdateUser");
 const checkPass = require("./routes/api/checkPass");
 require("./passport/index");
+
+// Increase payload size limit for body-parser
 app.use(express.json());
-// Enable CORS
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' })); // Set a higher limit for JSON requests
+
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT"], // Allow the client app to access the server
-    credentials: true, // Allow cookies/session to be sent from the client
+    methods: ["GET", "POST", "PUT"],
+    credentials: true,
   })
 );
 
@@ -43,12 +45,11 @@ app.use(
     secret: secret,
     resave: false,
     saveUninitialized: false,
-    store: store, // Don't create session until something stored
+    store: store,
     cookie: {
-      secure: false, // Requires https
-      httpOnly: true, // Prevents client side JS from reading the cookie7
+      secure: false,
+      httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      // Cookie will live for 24H
     },
   })
 );
@@ -71,7 +72,7 @@ mongoose
   .then(() => {
     app.listen(PORT, () => {
       console.log("Database Connected!");
-      console.log(`server is running on PORT: ${PORT}`);
+      console.log(`Server is running on PORT: ${PORT}`);
     });
   })
   .catch((error) => {

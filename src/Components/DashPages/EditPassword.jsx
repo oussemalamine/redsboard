@@ -2,27 +2,22 @@ import { useState, useEffect } from "react";
 import "./EditUser.css";
 import axiosInstance from "../axiosInstance";
 
-function EditPassword({ setOpen, user, setUser }) {
+function EditPassword({ setOpen, user }) {
   const [editedUser, setEditedUser] = useState();
   const [oldPassword, setOldPassword] = useState();
-  const [newPassword, setNewPssword] = useState();
-  const [error, setError] = useState();
+  const [newPassword, setNewPssword] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setEditedUser(user);
-  }, [user]);
-  console.log(editedUser);
+  }, []);
   const editPassword = async () => {
     try {
-      const response = await axiosInstance.put(`/users/${user._id}`, {
-        ...editedUser,
-        password: newPassword,
-      });
-      console.log(response.data); // For debugging
+      await axiosInstance.put(`/users/${user._id}`, editedUser);
       setError(null); // Reset error state
     } catch (error) {
       console.error("Error updating password:", error);
-      setError("Failed to update password. Please try again."); // Set error state
+      setError("Failed to update password. Please try again.");
     }
   };
 
@@ -34,12 +29,19 @@ function EditPassword({ setOpen, user, setUser }) {
       const response = await axiosInstance.get("/checkPass", {
         params: { username: user.username, oldPassword: oldPassword },
       });
-      if (response.data.message === "Password is correct") {
+      if (
+        response.data.message === "Password is correct" &&
+        newPassword !== null
+      ) {
+        editedUser.password = newPassword;
+        editedUser.confirmation = newPassword;
+        console.log("editedUser", editedUser);
         await editPassword(); // Call editPassword function to update password
-        setUser(editedUser);
         setOpen(false); // Close modal
       } else {
-        setError("Error: Incorrect old password");
+        if (newPassword === null) {
+          setError("password required");
+        } else setError("Error: Incorrect old password");
       }
     } catch (error) {
       console.log("Error:", error);
@@ -50,7 +52,7 @@ function EditPassword({ setOpen, user, setUser }) {
   return (
     <div className="linkedIn-popUp">
       <h3>Edit Informations</h3>
-      <p>{error ? error : null}</p>
+      <p style={{ color: "red" }}>{error ? error : null}</p>
       <p>
         please enter your informations here. We will send Updates Occasionally
       </p>
@@ -64,7 +66,7 @@ function EditPassword({ setOpen, user, setUser }) {
       />
       <input
         className="linkedIn-input"
-        type="password"
+        type="text"
         name="password"
         value={newPassword}
         placeholder="new Password"

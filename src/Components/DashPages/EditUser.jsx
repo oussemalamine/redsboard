@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./EditUser.css";
 import axiosInstance from "../axiosInstance";
-function EditUser({ setOpen, user, setUser }) {
+function EditUser({ setOpen, user, setUser, setUpdateLog }) {
   const [editedUser, setEditedUser] = useState({});
   useEffect(() => {
     setEditedUser(user);
@@ -25,6 +25,26 @@ function EditUser({ setOpen, user, setUser }) {
       );
       if (response.status === 200) {
         console.log("User updated successfully:", response.data);
+        const currentDate = new Date().toLocaleDateString();
+        setUpdateLog((prevUpdateLog) => {
+          const updatedLogs = [...prevUpdateLog];
+          const existingLogIndex = updatedLogs.findIndex(
+            (log) => log.date === currentDate
+          );
+          if (existingLogIndex !== -1) {
+            updatedLogs[existingLogIndex].events.push(
+              `User update LinkedIN at ${new Date().toLocaleTimeString()}`
+            );
+          } else {
+            updatedLogs.push({
+              date: currentDate,
+              events: [
+                `User update LinkedIn at ${new Date().toLocaleTimeString()}`,
+              ],
+            });
+          }
+          return updatedLogs;
+        });
       } else {
         console.error("Failed to update user:", response.statusText);
       }
@@ -35,27 +55,27 @@ function EditUser({ setOpen, user, setUser }) {
     setOpen(false);
   };
   return (
-      <div className="linkedIn-popUp">
-        <h3>Edit Informations</h3>
-        <p>
-          please enter your informations here. We will send Updates Occasionally
-        </p>
-        <input
-          className="linkedIn-input"
-          type="text"
-          name="linkedIn"
-          placeholder="linkedIn*"
-          onChange={handleChange}
-        />
-        <div className="pop-up-buttons">
-          <button className="close-pop-button" onClick={handleClose}>
-            Close
-          </button>
-          <button className="edit-pop-button" onClick={handleSubmit}>
-            Edit
-          </button>
-        </div>
+    <div className="linkedIn-popUp">
+      <h3>Edit Informations</h3>
+      <p>
+        please enter your informations here. We will send Updates Occasionally
+      </p>
+      <input
+        className="linkedIn-input"
+        type="text"
+        name="linkedIn"
+        placeholder="linkedIn*"
+        onChange={handleChange}
+      />
+      <div className="pop-up-buttons">
+        <button className="close-pop-button" onClick={handleClose}>
+          Close
+        </button>
+        <button className="edit-pop-button" onClick={handleSubmit}>
+          Edit
+        </button>
       </div>
+    </div>
   );
 }
 
